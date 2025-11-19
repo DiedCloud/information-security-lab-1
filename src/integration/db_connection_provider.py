@@ -14,13 +14,8 @@ class PGConnectionProvider:
     _session_maker: async_sessionmaker[AsyncSession]
 
     def __init__(self):
-        driver: str = "postgresql+asyncpg"
-        db_url: str = (
-            f"{driver}://{settings.PG_USERNAME}:{settings.PG_PASSWORD}"
-            f"@{settings.PG_HOST}:{settings.PG_PORT}/{settings.PG_DATABASE}"
-        )
         self._engine: AsyncEngine = create_async_engine(
-            url=db_url,
+            url=self.get_url(),
             pool_size=settings.PG_POOL_SIZE,
             max_overflow=2,
             pool_timeout=30,
@@ -39,3 +34,12 @@ class PGConnectionProvider:
 
     async def close_connection_pool(self):
         await self._engine.dispose(close=True)
+
+    @staticmethod
+    def get_url():
+        driver: str = "postgresql+asyncpg"
+        db_url: str = (
+            f"{driver}://{settings.PG_USERNAME}:{settings.PG_PASSWORD}"
+            f"@{settings.PG_HOST}:{settings.PG_PORT}/{settings.PG_DATABASE}"
+        )
+        return db_url

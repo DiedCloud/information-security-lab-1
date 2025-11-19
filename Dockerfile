@@ -14,11 +14,9 @@ RUN poetry cache clear pypi --all && poetry install --no-root --only main
 RUN rm -rf $POETRY_CACHE_DIR
 
 COPY . .
+RUN chmod +x ./docker-entrypoint.sh
 
-EXPOSE ${APP_PORT}
+EXPOSE ${APP_PORT:-8000}
 
-ENV RUNNING_IN_DOCKER=true
-
+ENTRYPOINT ["./docker-entrypoint.sh"]
 CMD ["--workers", "1"]
-
-ENTRYPOINT ["gunicorn", "src.main:app", "--worker-class", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:${APP_PORT}"]

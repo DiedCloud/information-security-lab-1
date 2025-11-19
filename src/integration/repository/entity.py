@@ -8,7 +8,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.integration.repository._base import Base
+from src.integration.repository.base import Base
 
 class User(Base):
     __tablename__ = "users"

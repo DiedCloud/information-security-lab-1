@@ -209,3 +209,6 @@ __marimo__/
 
 # custom, other
 log.json
+Dockerfile
+docker-compose.yml
+.github/

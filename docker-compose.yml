@@ -29,7 +29,8 @@ services:
     image: information-security-lab-1/api:latest
     restart: unless-stopped
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     ports:
       - "${APP_PORT}:${APP_PORT}"
     networks:
@@ -37,7 +38,7 @@ services:
     environment:
       PG_USERNAME: ${PG_USERNAME}
       PG_PASSWORD: ${PG_PASSWORD}
-      PG_HOST: pg
+      PG_HOST: postgres
       PG_PORT: 5432
       PG_DATABASE: ${PG_DATABASE}
       PG_POOL_SIZE: ${PG_POOL_SIZE}
@@ -48,7 +49,7 @@ services:
 
       JWT_SECRET: ${JWT_SECRET}
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:${APP_PORT}/actuator/health" ]
+      test: [ "CMD", "curl", "-f", "http://localhost:${APP_PORT}/healthcheck" ]
       interval: 15s
       timeout: 5s
       retries: 6
