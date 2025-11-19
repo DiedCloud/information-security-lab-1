@@ -1,7 +1,23 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, status
 from fastapi.responses import RedirectResponse
 
-app = FastAPI(title="Informational Security lab 1")
+from src.controller.routing.router import router
+from src.common.di_container import di
+from src.integration.db_connection_provider import PGConnectionProvider
+from src.service.generic.cors import add_cors_middleware
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    di.register_pg(PGConnectionProvider)
+    yield
+    await di.pg_connection_provider.close_connection_pool()
+    di.unregister_resources()
+
+app = FastAPI(title="Informational Security lab 1", lifespan=lifespan)
+add_cors_middleware(app)
+app.include_router(router)
 
 
 @app.get("/", include_in_schema=False)
