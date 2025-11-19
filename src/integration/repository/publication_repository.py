@@ -1,20 +1,21 @@
-from typing import Optional, Any
+from typing import Optional, Any, Annotated
 
+from fastapi import Depends
 from sqlalchemy import select, update, delete, Sequence
 from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import datetime, UTC
 
+from src.common.di_container import di
 from src.integration.repository.entity import Publication
 
 
 class PublicationRepository:
-    def __init__(self, session: AsyncSession):
+    def __init__(self, session: Annotated[AsyncSession, Depends(di.get_pg_session)]):
         self.session = session
 
     async def create(self, title: str, content: str, author_id: int) -> Publication:
         pub = Publication(title=title, content=content, author_id=author_id)
         self.session.add(pub)
-        await self.session.refresh(pub)
         return pub
 
     async def get_by_id(self, pub_id: int) -> Optional[Publication]:
@@ -55,5 +56,4 @@ class PublicationRepository:
     async def delete(self, pub_id: int) -> bool:
         q = delete(Publication).where(Publication.id == pub_id)
         res = await self.session.execute(q)
-        await self.session.commit()
         return True

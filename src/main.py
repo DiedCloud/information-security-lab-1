@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, status
 from fastapi.responses import RedirectResponse
 
-from src.controller.routing.router import router
+from src.controller.routing.crud_router import crud_router
 from src.common.di_container import di
 from src.integration.db_connection_provider import PGConnectionProvider
 from src.service.generic.cors import add_cors_middleware
@@ -17,7 +17,7 @@ async def lifespan(_app: FastAPI):
 
 app = FastAPI(title="Informational Security lab 1", lifespan=lifespan)
 add_cors_middleware(app)
-app.include_router(router)
+app.include_router(crud_router)
 
 
 @app.get("/", include_in_schema=False)
