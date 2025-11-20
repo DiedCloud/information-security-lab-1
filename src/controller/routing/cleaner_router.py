@@ -9,7 +9,7 @@ from src.controller.schemas.schemas import CleanerStatus, StartParams
 cleaner_router = APIRouter(prefix="/cleaner", tags=["Процесс удаления старых публикаций"])
 
 @cleaner_router.get("/", response_model=CleanerStatus)
-def get_status():
+async def get_status():
     """
     Возвращает статус планировщика и информацию о задаче.
     """
@@ -31,7 +31,7 @@ def get_status():
     }
 
 @cleaner_router.post("/", response_model=CleanerStatus)
-def start_cleaner(params: StartParams):
+async def start_cleaner(params: StartParams):
     """
     Запускает планировщик (если ещё не запущен) и ставит задачу.
     Если задача уже есть — заменит её.
@@ -56,13 +56,13 @@ def start_cleaner(params: StartParams):
         max_instances=1,
     )
 
-    response = get_status()
+    response = await get_status()
     response["message"] = "Cleaner scheduled"
     return response
 
 
 @cleaner_router.delete("/", response_model=CleanerStatus)
-def stop_cleaner():
+async def stop_cleaner():
     """
     Останавливает задачу (удаляет её).
     """
@@ -72,6 +72,6 @@ def stop_cleaner():
 
     scheduler.remove_job(JOB_ID)
 
-    response = get_status()
+    response = await get_status()
     response["message"] = "Cleaner job removed"
     return response

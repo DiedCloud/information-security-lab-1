@@ -55,11 +55,13 @@ class StartParams(BaseModel):
     def valid_interval_seconds(self):
         if "interval_seconds" in self.model_fields_set and self.interval_seconds and self.interval_seconds < 0:
             raise ValueError("interval_seconds should be > 0")
+        return self
 
     @model_validator(mode="after")
     def valid_cron(self):
-        if "cron" in self.model_fields_set and self.cron and not re.match(r"\d \d \d \d \d", self.cron):
+        if "cron" in self.model_fields_set and self.cron and not re.match(r"^(\S+ ){4}\S+$", self.cron):
             raise ValueError(f"Wrong cron statement: {self.cron}")
+        return self
 
 
 class CleanerStatus(DatetimeBaseModel):

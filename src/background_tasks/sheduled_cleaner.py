@@ -23,5 +23,6 @@ def make_job_func():
 
 
 async def delete_old_entities():
-    repo = PublicationRepository(di.get_pg_session())
-    await repo.delete_old_entities()
+    async with di.pg_connection_provider.get_session() as session:
+        repo = PublicationRepository(session)
+        await repo.delete_old_entities()
