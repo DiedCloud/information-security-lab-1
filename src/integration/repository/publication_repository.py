@@ -3,7 +3,7 @@ from typing import Optional, Any, Annotated
 from fastapi import Depends
 from sqlalchemy import select, update, delete, Sequence
 from sqlalchemy.ext.asyncio import AsyncSession
-from datetime import datetime, UTC
+from datetime import datetime, UTC, timedelta
 
 from src.common.di_container import di
 from src.integration.repository.entity import Publication
@@ -53,7 +53,10 @@ class PublicationRepository:
         await self.session.execute(q)
         return await self.get_by_id(pub_id)
 
-    async def delete(self, pub_id: int) -> bool:
+    async def delete(self, pub_id: int):
         q = delete(Publication).where(Publication.id == pub_id)
-        res = await self.session.execute(q)
-        return True
+        return await self.session.execute(q)
+
+    async def delete_old_entities(self, interval: timedelta = timedelta(days=14)):
+        q = delete(Publication).where(Publication.updated_at < datetime.now(UTC) - interval)
+        return await self.session.execute(q)

@@ -1,15 +1,18 @@
 from contextlib import asynccontextmanager
 
+from apscheduler.schedulers.base import STATE_RUNNING
 from fastapi import FastAPI, status, Depends
 from fastapi.responses import RedirectResponse
 from starlette.middleware.cors import CORSMiddleware
 
+from src.background_tasks.sheduled_cleaner import scheduler
 from src.controller.routing.auth import auth_router, get_current_user
 from src.controller.routing.crud_router import crud_router
 from src.controller.routing.cleaner_router import cleaner_router
 from src.common.di_container import di
 from src.integration.db_connection_provider import PGConnectionProvider
 from src.service.generic.auth_middleware import JWTAuthMiddleware
+from src.service.generic.logger import logger
 
 
 @asynccontextmanager
@@ -19,7 +22,13 @@ async def lifespan(_app: FastAPI):
     await di.pg_connection_provider.close_connection_pool()
     di.unregister_resources()
 
-app = FastAPI(title="Informational Security lab 1", lifespan=lifespan)
+    try:
+        if scheduler.state == STATE_RUNNING:
+            scheduler.shutdown(wait=False)
+    except Exception as e:
+        logger.exception("Ошибка при shutdown scheduler", exc_info=e)
+
+app = FastAPI(title="Information Security lab 1", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,  # noqa
     allow_origins=[],

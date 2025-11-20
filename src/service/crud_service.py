@@ -44,8 +44,7 @@ async def service_update_publication(
 async def service_delete_publication(
     session: AsyncSession,
     pub_id: int,
-) -> bool:
+):
     repo = PublicationRepository(session)
-    res = await repo.delete(pub_id)
+    await repo.delete(pub_id)
     await session.commit()
-    return res
