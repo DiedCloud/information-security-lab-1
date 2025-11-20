@@ -1,0 +1,56 @@
+from typing import Callable
+
+from jose import JWTError
+from starlette.middleware.base import BaseHTTPMiddleware
+from fastapi import Request
+from starlette.responses import JSONResponse
+
+from src.common.di_container import di
+from src.controller.routing.auth import AUTH_ROUTER_PREFIX
+from src.service.auth_service import get_user_id_from_token, get_user_by_id
+
+
+class JWTAuthMiddleware(BaseHTTPMiddleware):
+    def __init__(self, app, excluded_paths: list[str] | None = None):
+        super().__init__(app)
+        self.excluded_paths = excluded_paths or [AUTH_ROUTER_PREFIX, "/open", "/docs", "/redoc", "/openapi.json"]
+
+    async def dispatch(self, request: Request, call_next: Callable):
+        # Простой white-list: пропускаем Auth и docs
+        path = request.url.path
+        if any(path.startswith(p) for p in self.excluded_paths):
+            return await call_next(request)
+
+        auth_header = request.headers.get("Authorization")
+        if not auth_header:
+            return JSONResponse(
+                {"detail": "Not authenticated"}, status_code=401, headers={"WWW-Authenticate": "Bearer"}
+            )
+
+        if not auth_header.startswith("Bearer "):
+            return JSONResponse(
+                {"detail": "Invalid auth header"}, status_code=401, headers={"WWW-Authenticate": "Bearer"}
+            )
+
+        token = auth_header.split(" ", 1)[1].strip()
+        try:
+            user_id = int(get_user_id_from_token(token))
+        except (JWTError, TypeError, ValueError):
+            return JSONResponse(
+                {"detail": "Could not validate credentials"}, status_code=401, headers={"WWW-Authenticate": "Bearer"}
+            )
+
+        # Загрузим пользователя из БД
+        async with di.get_pg_session() as session:
+            user = await get_user_by_id(session, user_id)
+            if not user:
+                return JSONResponse(
+                    {"detail": "User not found"}, status_code=401, headers={"WWW-Authenticate": "Bearer"}
+                )
+
+            # Положим пользователя в request.state чтобы handler-ы могли его достать
+            request.state.user = user
+
+        # Продолжим цепочку
+        response = await call_next(request)
+        return response

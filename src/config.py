@@ -17,6 +17,7 @@ class _Settings(BaseSettings):
     # endregion
 
     # region other
+    JWT_SECRET: str
     LOG_LOCATION: str
     DEBUG: bool
     # endregion
