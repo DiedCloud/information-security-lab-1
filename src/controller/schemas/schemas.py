@@ -41,11 +41,6 @@ class Token(BaseModel):
 class UserCreate(BaseModel):
     login: str = Field(..., min_length=3, max_length=150)
     password: str = Field(..., min_length=6)
-
-
-class UserLogin(BaseModel):
-    login: str
-    password: str
 # endregion
 
 

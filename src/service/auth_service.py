@@ -13,7 +13,7 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = getattr(settings, "JWT_EXPIRATION_MINUTES", 60 * 24)  # default: 1 day
 SECRET_KEY = settings.JWT_SECRET
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
 
 def get_password_hash(password: str) -> str:
@@ -45,7 +45,7 @@ def get_user_id_from_token(token) -> Optional[str]:
 
 async def create_user(session: AsyncSession, login: str, password: str) -> User:
     repo = UserRepository(session)
-    user = await repo.create_user(login, password)
+    user = await repo.create_user(login, get_password_hash(password))
     await session.commit()
     await session.refresh(user)
     return user

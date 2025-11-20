@@ -1,10 +1,10 @@
 from fastapi import APIRouter, HTTPException, Depends, status
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.common.di_container import di
-from src.controller.schemas.schemas import Token, UserCreate, UserLogin
+from src.controller.schemas.schemas import Token, UserCreate
 from src.integration.repository.entity import User
 from src.integration.repository.user_repository import UserRepository
 from src.service.auth_service import (
@@ -57,8 +57,8 @@ async def register(payload: UserCreate, session: AsyncSession = Depends(di.get_p
 
 
 @auth_router.post("/login", response_model=Token)
-async def login(payload: UserLogin, session: AsyncSession = Depends(di.get_pg_session)):
-    user = await get_user_by_login(session, payload.login)
+async def login(payload: OAuth2PasswordRequestForm = Depends(), session: AsyncSession = Depends(di.get_pg_session)):
+    user = await get_user_by_login(session, payload.username)
     if not user or not verify_password(payload.password, user.password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

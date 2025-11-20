@@ -41,7 +41,7 @@ class JWTAuthMiddleware(BaseHTTPMiddleware):
             )
 
         # Загрузим пользователя из БД
-        async with di.get_pg_session() as session:
+        async with di.pg_connection_provider.get_session() as session:
             user = await get_user_by_id(session, user_id)
             if not user:
                 return JSONResponse(
