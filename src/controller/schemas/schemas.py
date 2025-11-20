@@ -1,7 +1,8 @@
 import re
-from typing import Optional
 from datetime import datetime
-from pydantic import BaseModel, Field, field_validator, model_validator
+from typing import Optional
+
+from pydantic import BaseModel, Field, model_validator
 
 from src.controller.schemas.base import DatetimeBaseModel
 
@@ -24,6 +25,8 @@ class PublicationOut(DatetimeBaseModel):
     author_id: int
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
+
+
 # endregion
 
 
@@ -41,6 +44,8 @@ class Token(BaseModel):
 class UserCreate(BaseModel):
     login: str = Field(..., min_length=3, max_length=150)
     password: str = Field(..., min_length=6)
+
+
 # endregion
 
 
@@ -71,4 +76,6 @@ class CleanerStatus(DatetimeBaseModel):
     next_run_time: Optional[datetime] = None
     trigger: Optional[str] = None
     job_id: Optional[str] = None
+
+
 # endregion

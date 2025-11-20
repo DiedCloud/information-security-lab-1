@@ -40,6 +40,8 @@ build-backend = "poetry.core.masonry.api"
 ruff = "^0.14.5"
 mypy = "^1.18.2"
 isort = "^7.0.0"
+types-python-jose = "^3.5.0.20250531"
+types-passlib = "^1.7.7.20250602"
 
 
 [tool.ruff]
@@ -99,13 +101,15 @@ lint.select = [
 lint.ignore = [
     "COM812", # The following rules may cause conflicts when used with the formatter: `COM812`.
     "E501",   # allow lines longer than 80 symbols (up to 120)
+    "INP001", # Add an `__init__.py`
     "RUF001", # String contains ambiguous `о` (CYRILLIC SMALL LETTER O). Did you mean `o` (LATIN SMALL LETTER O)?
     "RUF002", # Docstring contains ambiguous `В` (CYRILLIC CAPITAL LETTER VE). Did you mean `B` (LATIN CAPITAL LETTER B)
     "RUF003", # Comment contains ambiguous `с` (CYRILLIC SMALL LETTER ES). Did you mean `c` (LATIN SMALL LETTER C)
-    "PTH123", # `open()` should be replaced by `Path.open()`
-    # to simplify code for non-Python programmers
+    "PTH123", # `open()` should be replaced by `Path.open()` to simplify code for non-Python programmers
     "PTH118", # `os.path.join()` should be replaced by `Path` with the ` / ` operator
+    "TRY003", # Specifying long exception messages
     "UP032",  # [*] Use f-string instead of `format` call
+    "UP045",  # Optional instead of `T | None`
 ]
 lint.unfixable = [
     "ERA001", # prohibit "auto-fix" (=remove) commented-out code
@@ -134,3 +138,13 @@ ensure_newline_before_comments = true
 lines_after_imports = 2
 order_by_type = true
 case_sensitive = false
+
+[tool.ruff.lint.isort]
+lines-after-imports = 2
+order-by-type = true
+combine-as-imports = false
+split-on-trailing-comma = true
+lines-between-types = 0
+no-lines-before = []
+from-first = false
+case-sensitive = false

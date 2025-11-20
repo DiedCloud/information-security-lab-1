@@ -1,13 +1,13 @@
-from typing import Callable
+from collections.abc import Callable
 
+from fastapi import Request
 from jose import JWTError
 from starlette.middleware.base import BaseHTTPMiddleware
-from fastapi import Request
 from starlette.responses import JSONResponse
 
 from src.common.di_container import di
 from src.controller.routing.auth import AUTH_ROUTER_PREFIX
-from src.service.auth_service import get_user_id_from_token, get_user_by_id
+from src.service.auth_service import get_user_by_id, get_user_id_from_token
 
 
 class JWTAuthMiddleware(BaseHTTPMiddleware):
@@ -33,12 +33,16 @@ class JWTAuthMiddleware(BaseHTTPMiddleware):
             )
 
         token = auth_header.split(" ", 1)[1].strip()
+        err_401 = JSONResponse(
+            {"detail": "Could not validate credentials"}, status_code=401, headers={"WWW-Authenticate": "Bearer"}
+        )
         try:
-            user_id = int(get_user_id_from_token(token))
+            user_str = get_user_id_from_token(token)
+            if not user_str:
+                return err_401
+            user_id = int(user_str)
         except (JWTError, TypeError, ValueError):
-            return JSONResponse(
-                {"detail": "Could not validate credentials"}, status_code=401, headers={"WWW-Authenticate": "Bearer"}
-            )
+            return err_401
 
         # Загрузим пользователя из БД
         async with di.pg_connection_provider.get_session() as session:
@@ -52,5 +56,4 @@ class JWTAuthMiddleware(BaseHTTPMiddleware):
             request.state.user = user
 
         # Продолжим цепочку
-        response = await call_next(request)
-        return response
+        return await call_next(request)

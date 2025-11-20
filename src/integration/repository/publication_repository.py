@@ -1,9 +1,10 @@
-from typing import Optional, Any, Annotated
+from collections.abc import Sequence
+from datetime import UTC, datetime, timedelta
+from typing import Annotated, Any, Optional
 
 from fastapi import Depends
-from sqlalchemy import select, update, delete, Sequence
+from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
-from datetime import datetime, UTC, timedelta
 
 from src.common.di_container import di
 from src.integration.repository.entity import Publication

@@ -1,19 +1,25 @@
-from fastapi import APIRouter, Path, Depends, status, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Path, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.common.di_container import di
 from src.controller.routing.auth import get_current_user
 from src.controller.schemas.mapper import map_publication
-from src.controller.schemas.schemas import PublicationCreate, PublicationUpdate, PublicationOut, UserRead
+from src.controller.schemas.schemas import (
+    PublicationCreate,
+    PublicationOut,
+    PublicationUpdate,
+    UserRead,
+)
 from src.integration.repository.entity import Publication, User
 from src.integration.repository.publication_repository import PublicationRepository
 from src.service.crud_service import (
-    service_list_publications,
-    service_get_publication,
     service_create_publication,
-    service_update_publication,
     service_delete_publication,
+    service_get_publication,
+    service_list_publications,
+    service_update_publication,
 )
+
 
 crud_router = APIRouter(prefix="/api/data", tags=["CRUD операции публикаций"], dependencies=[Depends(get_current_user)])
 

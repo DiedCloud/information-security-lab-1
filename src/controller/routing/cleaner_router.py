@@ -1,12 +1,14 @@
-from apscheduler.schedulers.base import STATE_RUNNING
-from apscheduler.triggers.cron import CronTrigger
-from apscheduler.triggers.interval import IntervalTrigger
+from apscheduler.schedulers.base import STATE_RUNNING  # type: ignore
+from apscheduler.triggers.cron import CronTrigger  # type: ignore
+from apscheduler.triggers.interval import IntervalTrigger  # type: ignore
 from fastapi import APIRouter, HTTPException
 
-from src.background_tasks.sheduled_cleaner import scheduler, JOB_ID, make_job_func
+from src.background_tasks.sheduled_cleaner import JOB_ID, make_job_func, scheduler
 from src.controller.schemas.schemas import CleanerStatus, StartParams
 
+
 cleaner_router = APIRouter(prefix="/cleaner", tags=["Процесс удаления старых публикаций"])
+
 
 @cleaner_router.get("/", response_model=CleanerStatus)
 async def get_status():
@@ -29,6 +31,7 @@ async def get_status():
         "trigger": trigger,
         "job_id": JOB_ID,
     }
+
 
 @cleaner_router.post("/", response_model=CleanerStatus)
 async def start_cleaner(params: StartParams):

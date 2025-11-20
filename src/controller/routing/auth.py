@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -9,11 +9,12 @@ from src.integration.repository.entity import User
 from src.integration.repository.user_repository import UserRepository
 from src.service.auth_service import (
     create_access_token,
-    verify_password,
-    get_user_id_from_token,
     create_user,
     get_user_by_login,
+    get_user_id_from_token,
+    verify_password,
 )
+
 
 AUTH_ROUTER_PREFIX = "/auth"
 
@@ -33,7 +34,10 @@ async def get_current_user(
     )
 
     try:
-        user_id = int(get_user_id_from_token(token))
+        user_str = get_user_id_from_token(token)
+        if not user_str:
+            raise credentials_exception
+        user_id = int(user_str)
     except (JWTError, TypeError, ValueError):
         raise credentials_exception
 
@@ -68,5 +72,3 @@ async def login(payload: OAuth2PasswordRequestForm = Depends(), session: AsyncSe
 
     token = create_access_token(subject=str(user.id))
     return Token(access_token=token)
-
-

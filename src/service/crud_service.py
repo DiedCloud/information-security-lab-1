@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from typing import Optional
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -10,7 +11,7 @@ async def service_list_publications(
     repo: PublicationRepository,
     limit: int = 50,
     offset: int = 0,
-) -> list[Publication]:
+) -> Sequence[Publication]:
     return await repo.list(limit=limit, offset=offset)
 
 

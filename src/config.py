@@ -1,11 +1,8 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+
 class _Settings(BaseSettings):
-    model_config = SettingsConfigDict(
-        env_file='.env',
-        extra='allow',
-        env_file_encoding='utf-8'
-    )
+    model_config = SettingsConfigDict(env_file=".env", extra="allow", env_file_encoding="utf-8")
 
     # region postgresql
     PG_USERNAME: str
@@ -21,5 +18,6 @@ class _Settings(BaseSettings):
     LOG_LOCATION: str
     DEBUG: bool
     # endregion
+
 
 settings = _Settings()

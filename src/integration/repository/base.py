@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from sqlalchemy import JSON, MetaData
 from sqlalchemy.orm import DeclarativeBase
 
@@ -20,7 +22,7 @@ class Base(DeclarativeBase):
         }
     )
 
-    type_annotation_map = {
+    type_annotation_map: ClassVar[dict] = {
         dict: JSON,
         list[str]: JSON,
     }

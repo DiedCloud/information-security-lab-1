@@ -1,4 +1,4 @@
-from typing import AsyncGenerator
+from collections.abc import AsyncGenerator
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -10,6 +10,7 @@ class DIContainer(metaclass=SingletonMeta):
     """
     Простейший контейнер для хранения провайдеров соединений и статики
     """
+
     pg_connection_provider: PGConnectionProvider
 
     def register_pg(self, connection_provider: type[PGConnectionProvider]):

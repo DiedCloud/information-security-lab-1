@@ -7,6 +7,7 @@ from pythonjsonlogger.json import JsonFormatter
 
 from src.config import settings
 
+
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
@@ -18,17 +19,16 @@ if settings.DEBUG:
 json_file_formatter = JsonFormatter(  # Если передать словарь, то добавит поля
     "%(asctime)s %(levelname)s %(module)s %(funcName)s %(message)s"
 )
-verbose_formatter = ColoredFormatter( # Форматер для вывода в консоль с цветом
-    "%(log_color)s%(levelname)-9s %(asctime)s %(module)s:%(funcName)s\n"
-    "%(message)s\n",
-    datefmt='%H:%M:%S',
+verbose_formatter = ColoredFormatter(  # Форматер для вывода в консоль с цветом
+    "%(log_color)s%(levelname)-9s %(asctime)s %(module)s:%(funcName)s\n%(message)s\n",
+    datefmt="%H:%M:%S",
     log_colors={
-        'DEBUG':    'cyan',
-        'INFO':     'green',
-        'WARNING':  'yellow',
-        'ERROR':    'red',
-        'CRITICAL': 'bold_red',
-    }
+        "DEBUG": "cyan",
+        "INFO": "green",
+        "WARNING": "yellow",
+        "ERROR": "red",
+        "CRITICAL": "bold_red",
+    },
 )
 # endregion
 

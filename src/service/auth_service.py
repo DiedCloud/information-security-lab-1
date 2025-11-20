@@ -1,4 +1,4 @@
-from datetime import timedelta, datetime, UTC
+from datetime import UTC, datetime, timedelta
 from typing import Optional
 
 from jose import jwt
@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.config import settings
 from src.integration.repository.entity import User
 from src.integration.repository.user_repository import UserRepository
+
 
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = getattr(settings, "JWT_EXPIRATION_MINUTES", 60 * 24)  # default: 1 day
@@ -34,8 +35,7 @@ def create_access_token(subject: str, expires_delta: Optional[timedelta] = None)
         "iat": now,
         "exp": expire,
     }
-    token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
-    return token
+    return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
 
 def get_user_id_from_token(token) -> Optional[str]:
