@@ -13,7 +13,15 @@ from src.service.auth_service import get_user_by_id, get_user_id_from_token
 class JWTAuthMiddleware(BaseHTTPMiddleware):
     def __init__(self, app, excluded_paths: list[str] | None = None):
         super().__init__(app)
-        self.excluded_paths = excluded_paths or [AUTH_ROUTER_PREFIX, "/open", "/docs", "/redoc", "/openapi.json"]
+        self.excluded_paths = excluded_paths or [
+            AUTH_ROUTER_PREFIX,
+            "/",
+            "/healthcheck",
+            "/open",
+            "/docs",
+            "/redoc",
+            "/openapi.json",
+        ]
 
     async def dispatch(self, request: Request, call_next: Callable):
         # Простой white-list: пропускаем Auth и docs
