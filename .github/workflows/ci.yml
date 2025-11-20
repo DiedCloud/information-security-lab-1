@@ -78,7 +78,7 @@ jobs:
       - name: Run Bandit (SARIF)
         run: |
           mkdir -p results
-          bandit -r . --format sarif --output results/bandit.sarif || true
+          poetry run bandit -r src --format sarif --output results/bandit.sarif
 
       - name: Upload Bandit SARIF to GitHub (Code scanning)
         uses: github/codeql-action/upload-sarif@v3
