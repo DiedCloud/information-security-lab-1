@@ -42,6 +42,7 @@ mypy = "^1.18.2"
 isort = "^7.0.0"
 types-python-jose = "^3.5.0.20250531"
 types-passlib = "^1.7.7.20250602"
+bandit = {extras = ["sarif"], version = "^1.9.1"}
 
 
 [tool.ruff]
