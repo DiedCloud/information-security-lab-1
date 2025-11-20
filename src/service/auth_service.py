@@ -1,7 +1,7 @@
 from datetime import UTC, datetime, timedelta
 from typing import Optional
 
-from jose import jwt
+import jwt
 from passlib.context import CryptContext
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -32,8 +32,8 @@ def create_access_token(subject: str, expires_delta: Optional[timedelta] = None)
     expire = now + expires_delta
     payload = {
         "sub": str(subject),
-        "iat": now,
-        "exp": expire,
+        "iat": int(now.timestamp()),
+        "exp": int(expire.timestamp()),
     }
     return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 

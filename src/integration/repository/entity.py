@@ -44,7 +44,7 @@ class Publication(Base):
 
     author: Mapped["User"] = relationship("User", back_populates="publications", lazy="joined")
 
-    __table_args__ = Index("ix_publications_created_at", "created_at")
+    __table_args__ = (Index("ix_publications_created_at", "created_at"),)
 
     def __repr__(self) -> str:
         return f"<Publication(id={self.id} title={self.title!r} author_id={self.author_id})>"

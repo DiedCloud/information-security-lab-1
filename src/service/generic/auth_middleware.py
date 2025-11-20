@@ -1,7 +1,7 @@
 from collections.abc import Callable
 
 from fastapi import Request
-from jose import JWTError
+from jwt import PyJWTError
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse
 
@@ -41,7 +41,7 @@ class JWTAuthMiddleware(BaseHTTPMiddleware):
             if not user_str:
                 return err_401
             user_id = int(user_str)
-        except (JWTError, TypeError, ValueError):
+        except (PyJWTError, TypeError, ValueError):
             return err_401
 
         # Загрузим пользователя из БД

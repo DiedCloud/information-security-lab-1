@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from jose import JWTError
+from jwt import PyJWTError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.common.di_container import di
@@ -38,7 +38,7 @@ async def get_current_user(
         if not user_str:
             raise credentials_exception
         user_id = int(user_str)
-    except (JWTError, TypeError, ValueError):
+    except (PyJWTError, TypeError, ValueError):
         raise credentials_exception
 
     user = await repo.get_user_by_id(user_id)
