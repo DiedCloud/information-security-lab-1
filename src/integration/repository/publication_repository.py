@@ -42,7 +42,6 @@ class PublicationRepository:
         if not fields:
             return await self.get_by_id(pub_id)
 
-        # обновим updated_at вручную, чтобы гарантировать изменение (если вы не полагаетесь на server_onupdate)
         fields["updated_at"] = datetime.now(UTC)
 
         q = (
