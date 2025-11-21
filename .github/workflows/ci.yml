@@ -2,9 +2,9 @@ name: Python CI
 
 on:
   push:
-    branches: ['master', 'dev']
+    branches: [ 'master', 'dev' ]
   pull_request:
-    branches: ['master', 'dev']
+    branches: [ 'master', 'dev' ]
 
 jobs:
   test:
@@ -90,6 +90,12 @@ jobs:
         with:
           sarif_file: results/bandit.sarif
 
+      - name: Upload SARIF artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bandit-sarif
+          path: results/bandit.sarif
+
   sca-snyk:
     name: SCA — Snyk (dependencies + code)
     runs-on: ubuntu-latest
@@ -121,3 +127,9 @@ jobs:
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: results/snyk-deps.sarif
+
+      - name: Upload SARIF artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: snyk-sarif
+          path: results/snyk-deps.sarif
